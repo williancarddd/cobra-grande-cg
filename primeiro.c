@@ -123,3 +123,6 @@ int main(int argc, char** argv) {
     glutMainLoop();
     return 0;
 }
+
+
+// execute : g++ primeiro.c -o primeiro -lGL -lGLU -lglut
