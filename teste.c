@@ -19,7 +19,7 @@ typedef struct {
 Segment snake[MAX_SEGMENTS];
 int numSegments = 100;
 float segmentSize = 1.0f;  // Aumentado para 1.0f
-float snakeSpeed = 0.15f;
+float snakeSpeed = 0.2f;
 float amplitude = 1.2f;
 float frequency = 0.5f;
 
@@ -213,14 +213,12 @@ void drawPillars() {
         }
     }
 }
-//void drawModel(const std::vector<Triangle> &model, float posX, float posY, float posZ, float scale, float rotateX) {
 
 void drawBushes() {
     float bushScale = 0.05f; // Ajuste conforme necessário
     for (float x = -20.0f; x <= 20.0f; x += 5.0f) {
             drawModel(bushModel, x+5, 0.0f, 18, bushScale, -90);
             drawModel(bushModel, x+5, 0.0f, -18, bushScale, -90);
-            //drawSTLModel(bushModel, x, 0.0f, z, bushScale);
     }
 }
 
@@ -279,7 +277,7 @@ void display() {
     drawGround();
     drawUnderground();
     drawPillars();
-    //drawTrees();
+    drawTrees();
     drawSnake();
     drawSTLModel(cathedralModel);
     drawModel(houseModel1, house1PositionX, house1PositionY, house1PositionZ, houseScale, houseRotationX);
@@ -287,14 +285,14 @@ void display() {
     drawModel(houseModel3, house3PositionX, house3PositionY, house3PositionZ, houseScale, houseRotationX);
     drawModel(houseModel4, house4PositionX, house4PositionY, house4PositionZ, houseScale, houseRotationX);
     drawModel(houseModel5, house5PositionX, house5PositionY, house5PositionZ, houseScale, houseRotationX);
-    drawBushes();
+    //drawBushes();
     glutSwapBuffers();
 }
 
 void timer(int value) {
     updateSnake();
     glutPostRedisplay();
-    glutTimerFunc(1000 / 60, timer, 0);
+    glutTimerFunc(1000 / 120, timer, 0);
 }
 
 void handleKeypress(unsigned char key, int x, int y) {
@@ -305,30 +303,6 @@ void handleKeypress(unsigned char key, int x, int y) {
         cameraDistance -= 1.0f;
     } else if (key == '-') {
         cameraDistance += 1.0f;
-    } else if (key == 'w') {
-        modelRotationX += 5.0f;
-    } else if (key == 's') {
-        modelRotationX -= 5.0f;
-    } else if (key == 'a') {
-        modelRotationY -= 5.0f;
-    } else if (key == 'd') {
-        modelRotationY += 5.0f;
-    } else if (key == 'q') {
-        modelScale += 0.01f;
-    } else if (key == 'e') {
-        modelScale -= 0.01f;
-    } else if (key == 'i') {
-        modelPositionZ += 0.5f;
-    } else if (key == 'k') {
-        modelPositionZ -= 0.5f;
-    } else if (key == 'j') {
-        modelPositionX -= 0.5f;
-    } else if (key == 'l') {
-        modelPositionX += 0.5f;
-    } else if (key == 'u') {
-        modelPositionY += 0.5f;
-    } else if (key == 'o') {
-        modelPositionY -= 0.5f;
     }
     glutPostRedisplay();
 }
@@ -355,7 +329,7 @@ void handleSpecialKeypress(int key, int x, int y) {
 }
 
 void initOpenGL() {
-    if (!music.openFromFile("/home/eduardo/Documentos/Unir/cg/cobra-grande-cg/music2.ogg")) {
+    if (!music.openFromFile("/home/william/Projects/CG/cobra-grande-cg/music2.ogg")) {
         std::cerr << "Error loading music file!" << std::endl;
         exit(1);
     }
@@ -380,7 +354,7 @@ void initOpenGL() {
     loadSTLModel("scaleable_base_door_and_roofv1_merged.stl", houseModel3);
     loadSTLModel("scaleable_base_door_and_roofv1_merged.stl", houseModel4);
     loadSTLModel("scaleable_base_door_and_roofv1_merged.stl", houseModel5);
-    loadSTLModel("Bush-v3.stl", bushModel);
+    //loadSTLModel("Bush-v3.stl", bushModel);
 }
 
 int main(int argc, char **argv) {
@@ -398,3 +372,14 @@ int main(int argc, char **argv) {
     glutMainLoop();
     return 0;
 }
+
+
+// movimento circular da cobra 
+// animação da camera de cima para baixo sozinho
+// mudar a textura do chão
+// adicionar iluminação
+// adicionar textura aos pilares
+
+// melhorar o céu
+// adicionar pedras debaixo da cidade
+
