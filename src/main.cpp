@@ -33,6 +33,7 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     gluLookAt(cameraDistance, cameraY, cameraZ, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    drawSky();
     drawGround();
     drawUnderground();
     drawPillars();
@@ -53,18 +54,21 @@ void timer(int value) {
     glutTimerFunc(1000 / 120, timer, 0);
 }
 
+
 void initOpenGL() {
     initAudio();
     
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(45.0, 1.0, 1.0, 100.0);
     glMatrixMode(GL_MODELVIEW);
+    initLighting(); // Inicializa a iluminação
+    initTrees(); // Inicializar as posições das árvores
+
     treeTexture = loadTexture("assets/arvore.png");
-    groundTexture = loadTexture("assets/groundTexture.bmp");
- 
+    groundTexture = loadTexture("assets/Dry_Pebbles_Grassy_[4K]_Diffuse.jpg");
+    underGroundTexture = loadTexture("assets/PebblesSurface_1Albedo.jpg");
     // Carregar texturas e outros modelos...
     loadSTLModel("assets/Clermont-Ferrand_Cathedral.stl", cathedralModel);
     loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel1);
@@ -73,7 +77,6 @@ void initOpenGL() {
     //loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel4);
     loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel5);
 }
-
 int main(int argc, char **argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);

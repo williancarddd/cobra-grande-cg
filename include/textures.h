@@ -3,7 +3,7 @@
 
 #include <GL/glut.h>
 
-extern GLuint treeTexture, groundTexture, undergroundTexture, skySideTexture, skyTopTexture;
+extern GLuint treeTexture, groundTexture, underGroundTexture;
 
 GLuint loadTexture(const char *filename);
 
