@@ -4,8 +4,11 @@
 
 #define M_PI 3.14159265358979323846
 
-float cameraX = 35.0f, cameraY = 10.0f, cameraZ = 15.0f;
+float cameraX = 35.0f, cameraY = -3.0f, cameraZ = 15.0f; // Inicia na posição inferior
 float cameraAngleY = 0.0f, cameraDistance = 35.0f;
+float cameraSpeed = 0.1f; // Velocidade de rotação da câmera
+float cameraVerticalSpeed = 0.1f; // Velocidade de movimento vertical
+bool movingUp = true; // Direção do movimento vertical
 
 void handleKeypress(unsigned char key, int x, int y) {
     if (key == 27) { // ESC
@@ -34,7 +37,25 @@ void handleSpecialKeypress(int key, int x, int y) {
         cameraY -= 1.0f;
         break;
     }
-    cameraX = 35.0f * cos(cameraAngleY * M_PI / 180.0f);
-    cameraZ = 35.0f * sin(cameraAngleY * M_PI / 180.0f);
+    cameraX = cameraDistance * cos(cameraAngleY * M_PI / 180.0f);
+    cameraZ = cameraDistance * sin(cameraAngleY * M_PI / 180.0f);
     glutPostRedisplay();
+}
+
+void updateCamera() {
+    cameraAngleY += cameraSpeed;
+    cameraX = cameraDistance * cos(cameraAngleY * M_PI / 180.0f);
+    cameraZ = cameraDistance * sin(cameraAngleY * M_PI / 180.0f);
+
+    if (movingUp) {
+        cameraY += cameraVerticalSpeed;
+        if (cameraY >= 20.0f) {
+            movingUp = false;
+        }
+    } else {
+        cameraY -= cameraVerticalSpeed;
+        if (cameraY <= 5.0f) {
+            movingUp = true;
+        }
+    }
 }

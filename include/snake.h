@@ -12,8 +12,8 @@ extern Segment snake[MAX_SEGMENTS];
 extern int numSegments;
 extern float segmentSize;
 extern float snakeSpeed;
-extern float amplitude;
-extern float frequency;
+extern float radius;
+extern float elevationSpeed;
 
 void initSnake();
 void drawSnake();

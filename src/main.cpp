@@ -7,8 +7,14 @@
 #include "stl_loader.h"
 #include "models.h"
 #include "camera.h"
-#include "environment.h"
 #include "audio.h"
+#include "environment.h"
+#include "lighting.h"
+#include "sky.h"
+#include "ground.h"
+#include "underground.h"
+#include "pillars.h"
+#include "trees.h"
 
 #define M_PI 3.14159265358979323846
 
@@ -50,8 +56,9 @@ void display() {
 
 void timer(int value) {
     updateSnake();
+    updateCamera();
     glutPostRedisplay();
-    glutTimerFunc(1000 / 120, timer, 0);
+    glutTimerFunc(60, timer, 0);
 }
 
 
@@ -77,6 +84,7 @@ void initOpenGL() {
     //loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel4);
     loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel5);
 }
+
 int main(int argc, char **argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
