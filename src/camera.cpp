@@ -8,7 +8,6 @@ float cameraX = 35.0f, cameraY = -3.0f, cameraZ = 15.0f; // Inicia na posição 
 float cameraAngleY = 0.0f, cameraDistance = 35.0f;
 float cameraSpeed = 0.1f; // Velocidade de rotação da câmera
 float cameraVerticalSpeed = 0.1f; // Velocidade de movimento vertical
-bool movingUp = true; // Direção do movimento vertical
 
 void handleKeypress(unsigned char key, int x, int y) {
     if (key == 27) { // ESC
@@ -47,15 +46,8 @@ void updateCamera() {
     cameraX = cameraDistance * cos(cameraAngleY * M_PI / 180.0f);
     cameraZ = cameraDistance * sin(cameraAngleY * M_PI / 180.0f);
 
-    if (movingUp) {
+    // Movimento vertical apenas para cima até parar
+    if (cameraY < 20.0f) {
         cameraY += cameraVerticalSpeed;
-        if (cameraY >= 20.0f) {
-            movingUp = false;
-        }
-    } else {
-        cameraY -= cameraVerticalSpeed;
-        if (cameraY <= 5.0f) {
-            movingUp = true;
-        }
     }
 }

@@ -15,13 +15,14 @@
 #include "underground.h"
 #include "pillars.h"
 #include "trees.h"
+#include "lake.h"
 
 #define M_PI 3.14159265358979323846
 
 // Inicial position, rotation, and scale for the cathedral model
 float modelPositionX = 0.0f;
 float modelPositionY = 0.5f;
-float modelPositionZ = -8.5f;
+float modelPositionZ = -12.5f;
 float modelRotationX = -90.0f;
 float modelRotationY = 0.0f;
 float modelScale = 0.080001f;
@@ -42,6 +43,7 @@ void display() {
     drawSky();
     drawGround();
     drawUnderground();
+    drawLake();
     drawPillars();
     drawTrees();
     drawSnake();
