@@ -1,6 +1,6 @@
 #include <GL/glut.h>
 #include <SFML/Audio.hpp>
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include "snake.h"
 #include "textures.h"
@@ -16,6 +16,7 @@
 #include "pillars.h"
 #include "trees.h"
 #include "lake.h"
+#include "house.h"
 
 #define M_PI 3.14159265358979323846
 
@@ -30,14 +31,18 @@ float modelRotationX = -90.0f;
 float modelRotationY = 0.0f;
 float modelScale = 0.080001f;
 
-// Inicial position, rotation, and scale for the house model
-float house1PositionX = -10.0f, house1PositionY = 0.0f, house1PositionZ = 10.0f;
-float house2PositionX = 10.0f, house2PositionY = 0.0f, house2PositionZ = 10.0f;
-float house3PositionX = -5.0f, house3PositionY = 0.0f, house3PositionZ = 10.0f;
-float house4PositionX = 5.0f, house4PositionY = 0.0f, house4PositionZ = 10.0f;
-float house5PositionX = 10.0f, house5PositionY = 0.0f, house5PositionZ = -5.0f;
-float houseScale = 0.030001f;
-float houseRotationX = -90.0f;
+// Inicial position, rotation, and scale para as casas
+float housePositions[6][3] = {
+    {-10.0f, 0.1f, 10.0f},
+    {-15.0f, 0.1f, 20.0f},
+    {-15.0f, 0.1f, -20.0f},
+    {-15.0f, 0.1f, -30.0f},
+    {10.0f, 0.1f, 10.0f},
+    {10.0f, 0.1f, -10.0f}
+};
+
+// Flags para as posições das janelas e portas nas casas
+int houseFlags[6] = {2, 2, 4, 4, 2, 1};
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -50,12 +55,15 @@ void display() {
     drawPillars();
     drawTrees();
     drawSnake();
+
+    for (int i = 0; i < 6; ++i) {
+        glPushMatrix();
+        glTranslatef(housePositions[i][0], housePositions[i][1], housePositions[i][2]);
+        drawHouse(houseFlags[i]);
+        glPopMatrix();
+    }
+
     drawSTLModel(cathedralModel, modelPositionX, modelPositionY, modelPositionZ, modelScale, modelRotationX, modelRotationY);
-    drawModel(houseModel1, house1PositionX, house1PositionY, house1PositionZ, houseScale, houseRotationX);
-    drawModel(houseModel2, house2PositionX, house2PositionY, house2PositionZ, houseScale, houseRotationX);
-    drawModel(houseModel3, house3PositionX, house3PositionY, house3PositionZ, houseScale, houseRotationX);
-    drawModel(houseModel4, house4PositionX, house4PositionY, house4PositionZ, houseScale, houseRotationX);
-    drawModel(houseModel5, house5PositionX, house5PositionY, house5PositionZ, houseScale, houseRotationX);
     glutSwapBuffers();
 }
 
@@ -83,11 +91,6 @@ void initOpenGL() {
     snakeTexture = loadTexture("assets/snake.png"); // Carregar a textura da cobra
     // Carregar texturas e outros modelos...
     loadSTLModel("assets/Clermont-Ferrand_Cathedral.stl", cathedralModel);
-    //loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel1);
-    //loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel2);
-    //loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel3);
-    //loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel4);
-    //loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel5);
 }
 
 void handleKeypress(unsigned char key, int x, int y) {
