@@ -38,8 +38,6 @@ void drawModel(const std::vector<Triangle> &model, float posX, float posY, float
         for (int i = 0; i < 3; ++i) {
             glVertex3fv(triangle.vertices[i]);
         }
-
-       
     }
     glEnd();
     glPopMatrix();

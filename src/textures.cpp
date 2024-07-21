@@ -2,7 +2,7 @@
 #include <SOIL/SOIL.h>
 #include <stdio.h>
 
-GLuint treeTexture, groundTexture, underGroundTexture;
+GLuint treeTexture, groundTexture, underGroundTexture, snakeTexture; 
 
 GLuint loadTexture(const char *filename) {
     GLuint texture = SOIL_load_OGL_texture(

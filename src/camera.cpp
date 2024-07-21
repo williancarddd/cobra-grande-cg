@@ -9,17 +9,6 @@ float cameraAngleY = 0.0f, cameraDistance = 35.0f;
 float cameraSpeed = 0.1f; // Velocidade de rotação da câmera
 float cameraVerticalSpeed = 0.1f; // Velocidade de movimento vertical
 
-void handleKeypress(unsigned char key, int x, int y) {
-    if (key == 27) { // ESC
-        exit(0);
-    } else if (key == '+') {
-        cameraDistance -= 1.0f;
-    } else if (key == '-') {
-        cameraDistance += 1.0f;
-    }
-    glutPostRedisplay();
-}
-
 void handleSpecialKeypress(int key, int x, int y) {
     float angleSpeed = 2.0f;
     switch (key) {

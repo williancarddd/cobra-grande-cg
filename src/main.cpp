@@ -19,6 +19,9 @@
 
 #define M_PI 3.14159265358979323846
 
+// Variável para controlar o início da animação e da música
+bool animationStarted = false;
+
 // Inicial position, rotation, and scale for the cathedral model
 float modelPositionX = 0.0f;
 float modelPositionY = 0.5f;
@@ -57,16 +60,15 @@ void display() {
 }
 
 void timer(int value) {
-    updateSnake();
-    updateCamera();
+    if (animationStarted) {
+        updateSnake();
+        updateCamera();
+    }
     glutPostRedisplay();
     glutTimerFunc(60, timer, 0);
 }
 
-
 void initOpenGL() {
-    initAudio();
-    
     glEnable(GL_DEPTH_TEST);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -78,13 +80,31 @@ void initOpenGL() {
     treeTexture = loadTexture("assets/arvore.png");
     groundTexture = loadTexture("assets/Dry_Pebbles_Grassy_[4K]_Diffuse.jpg");
     underGroundTexture = loadTexture("assets/PebblesSurface_1Albedo.jpg");
+    snakeTexture = loadTexture("assets/snake.png"); // Carregar a textura da cobra
     // Carregar texturas e outros modelos...
     loadSTLModel("assets/Clermont-Ferrand_Cathedral.stl", cathedralModel);
-    loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel1);
-    loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel2);
+    //loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel1);
+    //loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel2);
     //loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel3);
     //loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel4);
-    loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel5);
+    //loadSTLModel("assets/scaleable_base_door_and_roofv1_merged.stl", houseModel5);
+}
+
+void handleKeypress(unsigned char key, int x, int y) {
+    if (key == 27) { // ESC
+        exit(0);
+    } else if (key == 13) { // Enter
+        if (!animationStarted) {
+            animationStarted = true;
+            initAudio(); // Inicializa e toca a música
+            music.play();
+        }
+    } else if (key == '+') {
+        cameraDistance -= 1.0f;
+    } else if (key == '-') {
+        cameraDistance += 1.0f;
+    }
+    glutPostRedisplay();
 }
 
 int main(int argc, char **argv) {

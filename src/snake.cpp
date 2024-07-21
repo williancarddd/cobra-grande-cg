@@ -1,20 +1,26 @@
 #include "snake.h"
 #include <GL/glut.h>
 #include <cmath>
-#include <iostream>
+#include <vector>
 
-Segment snake[MAX_SEGMENTS];
-int numSegments = 50;
-float segmentSize = 0.8f;
-float snakeSpeed = 0.04f; // Ajuste para movimento suave
-float radius = 5.0f; 
-float elevationSpeed = 0.07f; // Ajuste para elevação suave
-bool onSurface = false; // Flag para verificar se a cobra está na superfície
+// Variável global para a textura da cobra
+extern GLuint snakeTexture;
+
+std::vector<Segment> snake;
+int numSegments = 30; // Redução do número de segmentos
+float segmentSize = 0.6f; // Tamanho ajustado do segmento
+float snakeSpeed = 0.05f; // Ajuste para movimento suave
+float radius = 5.0f;
+float elevationSpeed = 0.04f;  // Ajuste para elevação suave
+bool onSurface = false;        // Flag para verificar se a cobra está na superfície
 bool snakeDisappeared = false; // Flag para verificar se a cobra desapareceu
-float boatX, boatY, boatZ; // Posição do barco
+float boatX, boatY, boatZ;     // Posição do barco
 
-void initSnake() {
-    for (int i = 0; i < numSegments; ++i) {
+void initSnake()
+{
+    snake.resize(numSegments);
+    for (int i = 0; i < numSegments; ++i)
+    {
         snake[i].x = radius * cos(i * 2 * M_PI / numSegments);
         snake[i].y = -4.5f;
         snake[i].z = radius * sin(i * 2 * M_PI / numSegments);
@@ -24,32 +30,8 @@ void initSnake() {
     }
 }
 
-void drawSnake() {
-    if (snakeDisappeared) {
-        return; // Não desenha a cobra se ela desapareceu
-    }
-
-    // Desenha a cabeça da cobra como um cubo
-    glColor3f(snake[0].r, snake[0].g, snake[0].b);
-    glPushMatrix();
-    glTranslatef(snake[0].x, snake[0].y, snake[0].z);
-    glutSolidCube(segmentSize);
-    glPopMatrix();
-
-    // Desenha o corpo da cobra
-    for (int i = 1; i < numSegments - 1; ++i) {
-        glColor3f(snake[i].r, snake[i].g, snake[i].b);
-        glBegin(GL_QUADS);
-        glVertex3f(snake[i].x, snake[i].y, snake[i].z);
-        glVertex3f(snake[i].x, snake[i].y + segmentSize, snake[i].z);
-        glVertex3f(snake[i + 1].x, snake[i + 1].y + segmentSize, snake[i + 1].z);
-        glVertex3f(snake[i + 1].x, snake[i + 1].y, snake[i + 1].z);
-        glEnd();
-    }
-}
-
-void drawBoat(float x, float y, float z) {
-    std::cout << "Desenhando barco em (" << x << ", " << y << ", " << z << ")" << std::endl; // Depuração
+void drawBoat(float x, float y, float z)
+{
     // Desenha um barco simples na posição especificada
     glColor3f(0.3f, 0.2f, 0.1f); // Marrom para o barco
     glPushMatrix();
@@ -59,51 +41,99 @@ void drawBoat(float x, float y, float z) {
     glPopMatrix();
 }
 
-void updateSnake() {
+void drawSnake()
+{
+    if (snakeDisappeared)
+    {
+        drawBoat(boatX, boatY, boatZ);
+    }
+    else
+    {
+        glEnable(GL_TEXTURE_2D); // Habilitar texturas
+        glBindTexture(GL_TEXTURE_2D, snakeTexture); // Vincular a textura da cobra
+
+        GLUquadric* quad = gluNewQuadric();
+        gluQuadricTexture(quad, GL_TRUE);
+
+        for (int i = 0; i < numSegments - 1; ++i)
+        {
+            float dx = snake[i + 1].x - snake[i].x;
+            float dy = snake[i + 1].y - snake[i].y;
+            float dz = snake[i + 1].z - snake[i].z;
+
+            float length = sqrt(dx * dx + dy * dy + dz * dz);
+
+            glPushMatrix();
+            glTranslatef(snake[i].x, snake[i].y, snake[i].z);
+
+            float angleX = atan2(dy, length) * 180.0 / M_PI;
+            float angleZ = atan2(dx, dz) * 180.0 / M_PI;
+
+            glRotatef(angleZ, 0.0f, 1.0f, 0.0f);
+            glRotatef(angleX, 1.0f, 0.0f, 0.0f);
+
+            gluCylinder(quad, segmentSize * 0.4f, segmentSize * 0.4f, length, 32, 32);
+            gluDisk(quad, 0, segmentSize * 0.4f, 32, 1); // Fechar a base do cilindro
+            glTranslatef(0, 0, length);
+            gluDisk(quad, 0, segmentSize * 0.4f, 32, 1); // Fechar o topo do cilindro
+
+            glPopMatrix();
+        }
+
+        gluDeleteQuadric(quad);
+        glDisable(GL_TEXTURE_2D); // Desabilitar texturas
+    }
+}
+
+void updateSnake()
+{
     static float angle = 0.0f;
     static float totalAngle = 0.0f;
     angle += snakeSpeed;
     totalAngle += snakeSpeed;
 
-    if (!onSurface) {
+    if (!onSurface)
+    {
         // Elevação suave da cobra
         snake[0].x = radius * cos(angle);
         snake[0].y += elevationSpeed;
         snake[0].z = radius * sin(angle);
 
-        if (snake[0].y >= 0.0f) {
+        if (snake[0].y >= 0.0f)
+        {
             onSurface = true;
-            for (int i = 0; i < numSegments; ++i) {
+            for (int i = 0; i < numSegments; ++i)
+            {
                 snake[i].y = 0.0f; // Ajuste final da elevação
             }
         }
-    } else if (totalAngle < 4 * M_PI) {
+    }
+    else if (totalAngle < 4 * M_PI)
+    {
         // Cobra dá duas voltas ao redor do ponto inicial
         snake[0].x = radius * cos(angle);
         snake[0].z = radius * sin(angle);
-    } else {
+    }
+    else
+    {
         // Cobra segue em linha reta
-        snake[0].x -= 0.45;
+        snake[0].x -= 0.4;
 
         // Cobra atinge a posição x = -20 e desaparece
-        if (snake[0].x <= -20.0f) {
+        if (snake[0].x <= -20.0f)
+        {
             snakeDisappeared = true;
             boatX = snake[0].x;
             boatY = snake[0].y;
             boatZ = snake[0].z;
-            std::cout << "Cobra desapareceu. Barco aparecerá em (" << boatX << ", " << boatY << ", " << boatZ << ")" << std::endl; // Depuração
         }
     }
 
-    // Atualiza os segmentos da cobra
-    for (int i = numSegments - 1; i > 0; --i) {
-        snake[i].x = snake[i - 1].x;
-        snake[i].y = snake[i - 1].y;
-        snake[i].z = snake[i - 1].z;
-    }
-
-    // Desenha o barco quando a cobra desaparece
-    if (snakeDisappeared) {
-        drawBoat(boatX, boatY, boatZ);
+    // Atualiza os segmentos da cobra com interpolação suave
+    for (int i = numSegments - 1; i > 0; --i)
+    {
+        snake[i].x += (snake[i - 1].x - snake[i].x) * 1.0;
+        snake[i].y += (snake[i - 1].y - snake[i].y) * 1.0;
+        snake[i].z += (snake[i - 1].z - snake[i].z) * 1.0;
     }
 }

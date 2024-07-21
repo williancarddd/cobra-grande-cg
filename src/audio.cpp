@@ -8,6 +8,6 @@ void initAudio() {
         std::cerr << "Error loading music file!" << std::endl;
         exit(1);
     }
-    //music.setLoop(true);
-   // music.play();
+    music.setLoop(false);
+    music.play();
 }
