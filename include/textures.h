@@ -3,11 +3,9 @@
 
 #include <GL/glut.h>
 
-extern GLuint treeTexture;
-extern GLuint groundTexture;
-extern GLuint underGroundTexture;
-extern GLuint snakeTexture; // Adicione a declaração da textura da cobra
+// Declaração de variáveis globais para texturas
+extern GLuint treeTexture, groundTexture, underGroundTexture, snakeTexture;
 
-GLuint loadTexture(const char* filename);
+GLuint loadTexture(const char *filename);
 
-#endif
+#endif // TEXTURES_H

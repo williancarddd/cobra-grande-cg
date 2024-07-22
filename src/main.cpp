@@ -54,7 +54,7 @@ void display() {
     drawLake();
     drawPillars();
     drawTrees();
-    drawSnake();
+
 
     for (int i = 0; i < 6; ++i) {
         glPushMatrix();
@@ -62,6 +62,8 @@ void display() {
         drawHouse(houseFlags[i]);
         glPopMatrix();
     }
+
+    drawSnake();
 
     drawSTLModel(cathedralModel, modelPositionX, modelPositionY, modelPositionZ, modelScale, modelRotationX, modelRotationY);
     glutSwapBuffers();
@@ -89,9 +91,13 @@ void initOpenGL() {
     groundTexture = loadTexture("assets/Dry_Pebbles_Grassy_[4K]_Diffuse.jpg");
     underGroundTexture = loadTexture("assets/PebblesSurface_1Albedo.jpg");
     snakeTexture = loadTexture("assets/snake.png"); // Carregar a textura da cobra
+    textureTopHome = loadTexture("assets/textureTopHome.png");
+    textureWall = loadTexture("assets/textureWall.png");
+    texturePortAndDoors = loadTexture("assets/texturDoorAndPort.png");
     // Carregar texturas e outros modelos...
     loadSTLModel("assets/Clermont-Ferrand_Cathedral.stl", cathedralModel);
 }
+
 
 void handleKeypress(unsigned char key, int x, int y) {
     if (key == 27) { // ESC

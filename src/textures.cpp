@@ -2,7 +2,9 @@
 #include <SOIL/SOIL.h>
 #include <stdio.h>
 
-GLuint treeTexture, groundTexture, underGroundTexture, snakeTexture; 
+// Definição das variáveis globais para texturas
+GLuint treeTexture, groundTexture, underGroundTexture, snakeTexture;
+
 
 GLuint loadTexture(const char *filename) {
     GLuint texture = SOIL_load_OGL_texture(

@@ -1,87 +1,97 @@
 #include "house.h"
+#include "textures.h"
 #include <GL/glut.h>
 
+GLuint textureTopHome;
+GLuint textureWall;
+GLuint texturePortAndDoors;
+
 void drawCube(float size) {
+    float repeatFactor = 4.0f; // Factor to repeat the texture
     glBegin(GL_QUADS);
     // Frente
-    glVertex3f(-size, -size, size);
-    glVertex3f(size, -size, size);
-    glVertex3f(size, size, size);
-    glVertex3f(-size, size, size);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-size, -size, size);
+    glTexCoord2f(repeatFactor, 0.0f); glVertex3f(size, -size, size);
+    glTexCoord2f(repeatFactor, repeatFactor); glVertex3f(size, size, size);
+    glTexCoord2f(0.0f, repeatFactor); glVertex3f(-size, size, size);
     // Trás
-    glVertex3f(-size, -size, -size);
-    glVertex3f(size, -size, -size);
-    glVertex3f(size, size, -size);
-    glVertex3f(-size, size, -size);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-size, -size, -size);
+    glTexCoord2f(repeatFactor, 0.0f); glVertex3f(size, -size, -size);
+    glTexCoord2f(repeatFactor, repeatFactor); glVertex3f(size, size, -size);
+    glTexCoord2f(0.0f, repeatFactor); glVertex3f(-size, size, -size);
     // Esquerda
-    glVertex3f(-size, -size, -size);
-    glVertex3f(-size, -size, size);
-    glVertex3f(-size, size, size);
-    glVertex3f(-size, size, -size);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-size, -size, -size);
+    glTexCoord2f(repeatFactor, 0.0f); glVertex3f(-size, -size, size);
+    glTexCoord2f(repeatFactor, repeatFactor); glVertex3f(-size, size, size);
+    glTexCoord2f(0.0f, repeatFactor); glVertex3f(-size, size, -size);
     // Direita
-    glVertex3f(size, -size, -size);
-    glVertex3f(size, -size, size);
-    glVertex3f(size, size, size);
-    glVertex3f(size, size, -size);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(size, -size, -size);
+    glTexCoord2f(repeatFactor, 0.0f); glVertex3f(size, -size, size);
+    glTexCoord2f(repeatFactor, repeatFactor); glVertex3f(size, size, size);
+    glTexCoord2f(0.0f, repeatFactor); glVertex3f(size, size, -size);
     // Topo
-    glVertex3f(-size, size, size);
-    glVertex3f(size, size, size);
-    glVertex3f(size, size, -size);
-    glVertex3f(-size, size, -size);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-size, size, size);
+    glTexCoord2f(repeatFactor, 0.0f); glVertex3f(size, size, size);
+    glTexCoord2f(repeatFactor, repeatFactor); glVertex3f(size, size, -size);
+    glTexCoord2f(0.0f, repeatFactor); glVertex3f(-size, size, -size);
     // Fundo
-    glVertex3f(-size, -size, size);
-    glVertex3f(size, -size, size);
-    glVertex3f(size, -size, -size);
-    glVertex3f(-size, -size, -size);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-size, -size, size);
+    glTexCoord2f(repeatFactor, 0.0f); glVertex3f(size, -size, size);
+    glTexCoord2f(repeatFactor, repeatFactor); glVertex3f(size, -size, -size);
+    glTexCoord2f(0.0f, repeatFactor); glVertex3f(-size, -size, -size);
     glEnd();
 }
 
 void drawPyramid(float baseSize, float height) {
+    float repeatFactor = 6.0f; // Factor to repeat the texture
     glBegin(GL_TRIANGLES);
     // Frente
-    glVertex3f(-baseSize, 0.0f, baseSize);
-    glVertex3f(baseSize, 0.0f, baseSize);
-    glVertex3f(0.0f, height, 0.0f);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-baseSize, 0.0f, baseSize);
+    glTexCoord2f(repeatFactor, 0.0f); glVertex3f(baseSize, 0.0f, baseSize);
+    glTexCoord2f(repeatFactor / 2.0f, repeatFactor); glVertex3f(0.0f, height, 0.0f);
     // Trás
-    glVertex3f(-baseSize, 0.0f, -baseSize);
-    glVertex3f(baseSize, 0.0f, -baseSize);
-    glVertex3f(0.0f, height, 0.0f);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-baseSize, 0.0f, -baseSize);
+    glTexCoord2f(repeatFactor, 0.0f); glVertex3f(baseSize, 0.0f, -baseSize);
+    glTexCoord2f(repeatFactor / 2.0f, repeatFactor); glVertex3f(0.0f, height, 0.0f);
     // Esquerda
-    glVertex3f(-baseSize, 0.0f, -baseSize);
-    glVertex3f(-baseSize, 0.0f, baseSize);
-    glVertex3f(0.0f, height, 0.0f);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-baseSize, 0.0f, -baseSize);
+    glTexCoord2f(repeatFactor, 0.0f); glVertex3f(-baseSize, 0.0f, baseSize);
+    glTexCoord2f(repeatFactor / 2.0f, repeatFactor); glVertex3f(0.0f, height, 0.0f);
     // Direita
-    glVertex3f(baseSize, 0.0f, -baseSize);
-    glVertex3f(baseSize, 0.0f, baseSize);
-    glVertex3f(0.0f, height, 0.0f);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(baseSize, 0.0f, -baseSize);
+    glTexCoord2f(repeatFactor, 0.0f); glVertex3f(baseSize, 0.0f, baseSize);
+    glTexCoord2f(repeatFactor / 2.0f, repeatFactor); glVertex3f(0.0f, height, 0.0f);
     glEnd();
 
     glBegin(GL_QUADS);
     // Fundo
-    glVertex3f(-baseSize, 0.0f, baseSize);
-    glVertex3f(baseSize, 0.0f, baseSize);
-    glVertex3f(baseSize, 0.0f, -baseSize);
-    glVertex3f(-baseSize, 0.0f, -baseSize);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-baseSize, 0.0f, baseSize);
+    glTexCoord2f(repeatFactor, 0.0f); glVertex3f(baseSize, 0.0f, baseSize);
+    glTexCoord2f(repeatFactor, repeatFactor); glVertex3f(baseSize, 0.0f, -baseSize);
+    glTexCoord2f(0.0f, repeatFactor); glVertex3f(-baseSize, 0.0f, -baseSize);
     glEnd();
 }
 
 void drawHouse(int flag) {
     // Desenhar o corpo principal da casa
-    glColor3f(0.79f, 0.85f, 0.59f);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textureWall);
+    glColor3f(1.0f, 1.0f, 1.0f);
     glPushMatrix();
     glTranslatef(0.0f, 2.5f, 0.0f);
     drawCube(2.5f);
     glPopMatrix();
 
     // Desenhar o telhado
-    glColor3f(0.31f, 0.33f, 0.47f);
+    glBindTexture(GL_TEXTURE_2D, textureTopHome);
     glPushMatrix();
     glTranslatef(0.0f, 5.0f, 0.0f);
     drawPyramid(2.5f, 2.0f);
     glPopMatrix();
 
     // Desenhar a porta e as janelas com base na flag
-    glColor3f(0.29f, 0.57f, 0.75f); // Cor da porta e janelas
+    glBindTexture(GL_TEXTURE_2D, texturePortAndDoors);
+    glColor3f(1.0f, 1.0f, 1.0f);
     switch (flag) {
         case 1: // Frente
             // Porta
@@ -164,4 +174,5 @@ void drawHouse(int flag) {
             glPopMatrix();
             break;
     }
+    glDisable(GL_TEXTURE_2D);
 }

@@ -7,11 +7,11 @@
 extern GLuint snakeTexture;
 
 std::vector<Segment> snake;
-int numSegments = 30; // Redução do número de segmentos
-float segmentSize = 0.6f; // Tamanho ajustado do segmento
+int numSegments = 50; // Redução do número de segmentos
+float segmentSize = 1.0f; // Tamanho ajustado do segmento
 float snakeSpeed = 0.05f; // Ajuste para movimento suave
-float radius = 5.0f;
-float elevationSpeed = 0.04f;  // Ajuste para elevação suave
+float radius = 6.0f;
+float elevationSpeed = 0.07f;  // Ajuste para elevação suave
 bool onSurface = false;        // Flag para verificar se a cobra está na superfície
 bool snakeDisappeared = false; // Flag para verificar se a cobra desapareceu
 float boatX, boatY, boatZ;     // Posição do barco
@@ -72,16 +72,16 @@ void drawSnake()
             glRotatef(angleZ, 0.0f, 1.0f, 0.0f);
             glRotatef(angleX, 1.0f, 0.0f, 0.0f);
 
-            gluCylinder(quad, segmentSize * 0.4f, segmentSize * 0.4f, length, 32, 32);
-            gluDisk(quad, 0, segmentSize * 0.4f, 32, 1); // Fechar a base do cilindro
+            gluCylinder(quad, segmentSize * 0.6f, segmentSize * 0.6f, length, 32, 32);
+            gluDisk(quad, 0, segmentSize * 0.6f, 32, 1); // Fechar a base do cilindro
             glTranslatef(0, 0, length);
-            gluDisk(quad, 0, segmentSize * 0.4f, 32, 1); // Fechar o topo do cilindro
+            gluDisk(quad, 0, segmentSize * 0.6f, 32, 1); // Fechar o topo do cilindro
 
             glPopMatrix();
         }
 
         gluDeleteQuadric(quad);
-        glDisable(GL_TEXTURE_2D); // Desabilitar texturas
+        glDisable(GL_TEXTURE_2D);
     }
 }
 
@@ -102,22 +102,19 @@ void updateSnake()
         if (snake[0].y >= 0.0f)
         {
             onSurface = true;
-            for (int i = 0; i < numSegments; ++i)
-            {
-                snake[i].y = 0.0f; // Ajuste final da elevação
-            }
         }
     }
     else if (totalAngle < 4 * M_PI)
     {
         // Cobra dá duas voltas ao redor do ponto inicial
+        snake[0].y = .5f;
         snake[0].x = radius * cos(angle);
         snake[0].z = radius * sin(angle);
     }
     else
     {
         // Cobra segue em linha reta
-        snake[0].x -= 0.4;
+        snake[0].x -= 0.2;
 
         // Cobra atinge a posição x = -20 e desaparece
         if (snake[0].x <= -20.0f)
@@ -132,8 +129,8 @@ void updateSnake()
     // Atualiza os segmentos da cobra com interpolação suave
     for (int i = numSegments - 1; i > 0; --i)
     {
-        snake[i].x += (snake[i - 1].x - snake[i].x) * 1.0;
-        snake[i].y += (snake[i - 1].y - snake[i].y) * 1.0;
-        snake[i].z += (snake[i - 1].z - snake[i].z) * 1.0;
+        snake[i].x += (snake[i - 1].x - snake[i].x) * 0.5;
+        snake[i].y += (snake[i - 1].y - snake[i].y) * 0.5;
+        snake[i].z += (snake[i - 1].z - snake[i].z) * 0.5;
     }
 }
