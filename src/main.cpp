@@ -93,6 +93,7 @@ void initOpenGL() {
     snakeTexture = loadTexture("assets/snake.png"); // Carregar a textura da cobra
     textureTopHome = loadTexture("assets/textureTopHome.png");
     textureWall = loadTexture("assets/textureWall.png");
+    waterTexture = loadTexture("assets/clear-sea-water-1024x1024.png");
     texturePortAndDoors = loadTexture("assets/texturDoorAndPort.png");
     // Carregar texturas e outros modelos...
     loadSTLModel("assets/Clermont-Ferrand_Cathedral.stl", cathedralModel);

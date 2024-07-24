@@ -2,87 +2,119 @@
 #include <GL/glut.h>
 #include <cmath>
 #include <vector>
+#include "textures.h"
 
-void drawLake() {
-    float waveHeight = 0.05f;  // Altura da onda
-    float waveFrequency = 0.1f; // Frequência da onda
-    float waveSpeed = 0.03f;    // Velocidade da onda
-    static float time = 0.0f;   // Tempo para animação
+float getWaveHeight(float x, float z, float time) {
+    float waveFrequency = 0.1f;
+    float waveAmplitude = 0.05f; // Altura da onda ajustada
+    float tideAmplitude = 3.0f;  // Amplitude da maré
+    float tideFrequency = 0.01f; // Frequência da maré
 
-    float baseHeight = 0.1f;    // Elevação da base do lago
+    // Cálculo da altura das ondas e da maré
+    float waveHeight = sin(x * waveFrequency + time) * waveAmplitude + cos(z * waveFrequency + time) * waveAmplitude;
+    float tideHeight = sin(time * tideFrequency) * tideAmplitude;
 
-    time += waveSpeed;
+    return waveHeight + tideHeight;
+}
 
-    // Desenha a água com ondas
+void setupWaterMaterial() {
+    // Define propriedades do material da água
+    GLfloat mat_specular[] = {0.3, 0.3, 0.3, 1.0}; // Reflectividade do material
+    GLfloat mat_shininess[] = {70.0};              // Brilho do material
+    GLfloat mat_diffuse[] = {0.0, 0.5, 1.0, 0.7};  // Cor difusa do material com alguma transparência
+
+    // Aplica as propriedades do material
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+
+    // Habilita mistura (blending) para criar efeitos de transparência
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Habilita o uso de texturas 2D
+    glEnable(GL_TEXTURE_2D);
+
+    // Configura o ambiente de iluminação
+    GLfloat light_position[] = {0.0, 1.0, 1.0, 1.0}; // Posição da luz
+    GLfloat light_ambient[] = {0.2, 0.2, 0.2, 1.0};  // Luz ambiente
+    GLfloat light_diffuse[] = {0.8, 0.8, 0.8, 1.0};  // Luz difusa
+    GLfloat light_specular[] = {1.0, 1.0, 1.0, 1.0}; // Luz especular
+
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+
+    // Habilita a iluminação
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+}
+
+void drawLakeSurface(float time) {
+    glBindTexture(GL_TEXTURE_2D, waterTexture);
     glBegin(GL_QUADS);
     glColor3f(0.0f, 0.5f, 1.0f); // Azul para a água do lago
 
-    for (float x = -100.0f; x < -20.0f; x += 1.0f) {
-        for (float z = -100.0f; z < 100.0f; z += 1.0f) {
-            float y1 = baseHeight + waveHeight * sin(waveFrequency * (x + z) + time);
-            float y2 = baseHeight + waveHeight * sin(waveFrequency * (x + z + 1.0f) + time);
-            float y3 = baseHeight + waveHeight * sin(waveFrequency * (x + 1.0f + z + 1.0f) + time);
-            float y4 = baseHeight + waveHeight * sin(waveFrequency * (x + 1.0f + z) + time);
+    float baseHeight = 0.1f;    // Elevação da base do lago
+    float floorSize = 100.0f;
+    int grid = 5;
 
-            glVertex3f(x, y1, z);
-            glVertex3f(x, y2, z + 1.0f);
-            glVertex3f(x + 1.0f, y3, z + 1.0f);
-            glVertex3f(x + 1.0f, y4, z);
+    for (float x = -floorSize; x < -20.0f; x += grid) {
+        for (float z = -floorSize; z < floorSize; z += grid) {
+            float waveHeight1 = baseHeight + getWaveHeight(x, z, time);
+            float waveHeight2 = baseHeight + getWaveHeight(x + grid, z, time);
+            float waveHeight3 = baseHeight + getWaveHeight(x + grid, z + grid, time);
+            float waveHeight4 = baseHeight + getWaveHeight(x, z + grid, time);
+
+            glTexCoord2f(0.0, 0.0); glVertex3f(x, waveHeight1, z);
+            glTexCoord2f(1.0, 0.0); glVertex3f(x + grid, waveHeight2, z);
+            glTexCoord2f(1.0, 1.0); glVertex3f(x + grid, waveHeight3, z + grid);
+            glTexCoord2f(0.0, 1.0); glVertex3f(x, waveHeight4, z + grid);
         }
     }
 
     glEnd();
+}
 
-    // Desenha os quadriculados brancos para destacar as cristas das ondas
+void drawWaveHighlights(float time) {
+    float baseHeight = 0.1f;    // Elevação da base do lago
+    float floorSize = 100.0f;
+    int grid = 5;
+
     glLineWidth(1.0f);
     glColor3f(1.0f, 1.0f, 1.0f); // Branco para os quadriculados
     glBegin(GL_QUADS);
 
-    for (float x = -100.0f; x < -20.0f; x += 1.0f) {
-        for (float z = -100.0f; z < 100.0f; z += 1.0f) {
-            float y1 = baseHeight + waveHeight * sin(waveFrequency * (x + z) + time);
-            float y2 = baseHeight + waveHeight * sin(waveFrequency * (x + z + 1.0f) + time);
-            float y3 = baseHeight + waveHeight * sin(waveFrequency * (x + 1.0f + z + 1.0f) + time);
-            float y4 = baseHeight + waveHeight * sin(waveFrequency * (x + 1.0f + z) + time);
+    for (float x = -floorSize; x < -20.0f; x += grid) {
+        for (float z = -floorSize; z < floorSize; z += grid) {
+            float waveHeight1 = baseHeight + getWaveHeight(x, z, time);
+            float waveHeight2 = baseHeight + getWaveHeight(x + grid, z, time);
+            float waveHeight3 = baseHeight + getWaveHeight(x + grid, z + grid, time);
+            float waveHeight4 = baseHeight + getWaveHeight(x, z + grid, time);
 
             // Desenha os quadriculados nas cristas das ondas
-            if (y1 > baseHeight || y2 > baseHeight || y3 > baseHeight || y4 > baseHeight) {
+            if (waveHeight1 > baseHeight || waveHeight2 > baseHeight || waveHeight3 > baseHeight || waveHeight4 > baseHeight) {
                 float squareSize = 0.1f; // Tamanho dos quadriculados
 
-                glVertex3f(x - squareSize, y1 + squareSize, z - squareSize);
-                glVertex3f(x - squareSize, y1 + squareSize, z + squareSize);
-                glVertex3f(x + squareSize, y1 + squareSize, z + squareSize);
-                glVertex3f(x + squareSize, y1 + squareSize, z - squareSize);
+                glVertex3f(x - squareSize, waveHeight1 + squareSize, z - squareSize);
+                glVertex3f(x - squareSize, waveHeight1 + squareSize, z + squareSize);
+                glVertex3f(x + squareSize, waveHeight1 + squareSize, z + squareSize);
+                glVertex3f(x + squareSize, waveHeight1 + squareSize, z - squareSize);
             }
         }
     }
 
     glEnd();
-
 }
 
-void drawStones() {
-    glColor3f(0.5f, 0.5f, 0.5f); // Cinza para as pedras
+void drawLake() {
+    static float time = 0.0f;   // Tempo para animação
+    float waveSpeed = 0.06f;    // Velocidade da onda
 
-    std::vector<std::pair<float, float>> stonePositions = {
-        {-100.0f, -100.0f}, {-98.0f, -100.0f}, {-97.0f, -100.0f},
-        {-96.0f, -100.0f}, {-95.0f, -100.0f}, {-94.0f, -100.0f},
-        {-93.0f, -100.0f}, {-92.0f, -100.0f}, {-91.0f, -100.0f},
-        {-100.0f, 100.0f}, {-98.0f, 100.0f}, {-97.0f, 100.0f},
-        {-96.0f, 100.0f}, {-95.0f, 100.0f}, {-94.0f, 100.0f},
-        {-93.0f, 100.0f}, {-92.0f, 100.0f}, {-91.0f, 100.0f},
-        {-20.0f, -100.0f}, {-20.0f, -98.0f}, {-20.0f, -97.0f},
-        {-20.0f, -96.0f}, {-20.0f, -95.0f}, {-20.0f, -94.0f},
-        {-20.0f, -93.0f}, {-20.0f, -92.0f}, {-20.0f, -91.0f},
-        {-20.0f, 100.0f}, {-20.0f, 98.0f}, {-20.0f, 97.0f},
-        {-20.0f, 96.0f}, {-20.0f, 95.0f}, {-20.0f, 94.0f},
-        {-20.0f, 93.0f}, {-20.0f, 92.0f}, {-20.0f, 91.0f}
-    };
+    time += waveSpeed;
 
-    for (const auto& pos : stonePositions) {
-        glPushMatrix();
-        glTranslatef(pos.first, 0.15f, pos.second);
-        glutSolidCube(1.0f);
-        glPopMatrix();
-    }
+    setupWaterMaterial(); // Aplica material da água
+    drawLakeSurface(time);
+    drawWaveHighlights(time);
 }
