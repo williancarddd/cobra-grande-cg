@@ -4,7 +4,7 @@
 #include <GL/glut.h>
 
 // Declaração de variáveis globais para texturas
-extern GLuint treeTexture, groundTexture, underGroundTexture, snakeTexture, waterTexture;
+extern GLuint treeTexture, groundTexture, underGroundTexture, snakeTexture, waterTexture, moonTexture, trunkTexture, foliageTexture;
 
 GLuint loadTexture(const char *filename);
 

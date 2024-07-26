@@ -3,6 +3,7 @@
 #include <GL/glut.h>
 
 void drawPillars() {
+    glPushMatrix();
     float pillarHeight = 5.0f;
     float pillarWidth = 0.5f;
     glColor3f(0.22f, 0.22f, 0.22f);
@@ -35,4 +36,6 @@ void drawPillars() {
             glPopMatrix();
         }
     }
+
+    glPopMatrix();
 }

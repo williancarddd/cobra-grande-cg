@@ -2,9 +2,9 @@
 #include "trees.h"
 #include "environment.h"
 #include <GL/glut.h>
-
+#include <textures.h>
 void drawTrees() {
-    glColor3f(0.4f, 0.2f, 0.0f); // Cor marrom para o tronco
+    glPushMatrix();
 
     for (const auto& position : treePositions) {
         float x = position.first;
@@ -14,17 +14,24 @@ void drawTrees() {
         glTranslatef(x, 0.0f, z);
 
         // Desenhar o tronco
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, trunkTexture);
         GLUquadric* quad = gluNewQuadric();
+        gluQuadricTexture(quad, GL_TRUE);
         glRotatef(-90, 1.0, 0.0, 0.0);
-        glColor3f(0.4f, 0.2f, 0.0f); // Cor marrom para o tronco
         gluCylinder(quad, 0.2, 0.2, 2.0, 32, 32); // Tronco: raio base, raio topo, altura, slices, stacks
         gluDeleteQuadric(quad);
+        glDisable(GL_TEXTURE_2D);
 
         // Desenhar a copa
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, foliageTexture);
         glTranslatef(0.0f, 0.0f, 2.0f); // Mover para o topo do tronco
-        glColor3f(0.0f, 0.5f, 0.0f); // Cor verde para a copa
         glutSolidSphere(1.0, 32, 32); // Copa: raio, slices, stacks
+        glDisable(GL_TEXTURE_2D);
 
         glPopMatrix();
     }
+
+    glPopMatrix();
 }

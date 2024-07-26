@@ -37,7 +37,7 @@ float housePositions[6][3] = {
     {-15.0f, 0.1f, 20.0f},
     {-15.0f, 0.1f, -20.0f},
     {-15.0f, 0.1f, -30.0f},
-    {10.0f, 0.1f, 10.0f},
+    {5.0f, 0.1f, 10.0f},
     {10.0f, 0.1f, -10.0f}
 };
 
@@ -48,25 +48,25 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     gluLookAt(cameraDistance, cameraY, cameraZ, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    
+    glPushMatrix();
+    drawTrees();
+    drawLake();
     drawSky();
     drawGround();
     drawUnderground();
-    drawLake();
     drawPillars();
-    drawTrees();
-
-
+   
     for (int i = 0; i < 6; ++i) {
         glPushMatrix();
         glTranslatef(housePositions[i][0], housePositions[i][1], housePositions[i][2]);
         drawHouse(houseFlags[i]);
         glPopMatrix();
     }
-
     drawSnake();
-
     drawSTLModel(cathedralModel, modelPositionX, modelPositionY, modelPositionZ, modelScale, modelRotationX, modelRotationY);
     glutSwapBuffers();
+    glPopMatrix();
 }
 
 void timer(int value) {
@@ -82,9 +82,9 @@ void initOpenGL() {
     glEnable(GL_DEPTH_TEST);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(45.0, 1.0, 1.0, 100.0);
+    gluPerspective(45.0, 1.0, 1.0, 350.0);
     glMatrixMode(GL_MODELVIEW);
-    initLighting(); // Inicializa a iluminação
+    initLighting();
     initTrees(); // Inicializar as posições das árvores
 
     treeTexture = loadTexture("assets/arvore.png");
@@ -93,8 +93,11 @@ void initOpenGL() {
     snakeTexture = loadTexture("assets/snake.png"); // Carregar a textura da cobra
     textureTopHome = loadTexture("assets/textureTopHome.png");
     textureWall = loadTexture("assets/textureWall.png");
-    waterTexture = loadTexture("assets/clear-sea-water-1024x1024.png");
+    waterTexture = loadTexture("assets/water.png");
     texturePortAndDoors = loadTexture("assets/texturDoorAndPort.png");
+    moonTexture = loadTexture("assets/moon.png");
+    trunkTexture = loadTexture("assets/bark.png"); 
+    foliageTexture = loadTexture("assets/base_grass5.png");
     // Carregar texturas e outros modelos...
     loadSTLModel("assets/Clermont-Ferrand_Cathedral.stl", cathedralModel);
 }
@@ -118,6 +121,7 @@ void handleKeypress(unsigned char key, int x, int y) {
 }
 
 int main(int argc, char **argv) {
+    
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(800, 600);

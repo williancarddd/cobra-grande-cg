@@ -4,6 +4,7 @@
 #include <GL/glut.h>
 
 void drawUnderground() {
+    glPushMatrix();
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, underGroundTexture);
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -24,4 +25,5 @@ void drawUnderground() {
     }
     glEnd();
     glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
 }

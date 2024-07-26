@@ -33,8 +33,8 @@ void initSnake()
 void drawBoat(float x, float y, float z)
 {
     // Desenha um barco simples na posição especificada
-    glColor3f(0.3f, 0.2f, 0.1f); // Marrom para o barco
     glPushMatrix();
+    glColor3f(0.3f, 0.2f, 0.1f); // Marrom para o barco
     glTranslatef(x, y, z);
     glScalef(2.0f, 0.5f, 1.0f);
     glutSolidCube(segmentSize * 5); // Tamanho ajustado do barco
@@ -43,6 +43,7 @@ void drawBoat(float x, float y, float z)
 
 void drawSnake()
 {
+    glPushMatrix();
     if (snakeDisappeared)
     {
         drawBoat(boatX, boatY, boatZ);
@@ -83,6 +84,8 @@ void drawSnake()
         gluDeleteQuadric(quad);
         glDisable(GL_TEXTURE_2D);
     }
+
+    glPopMatrix();
 }
 
 void updateSnake()

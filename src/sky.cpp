@@ -2,31 +2,14 @@
 #include <GL/glut.h>
 #include <cstdlib>
 #include <cmath>
+#include <moon.h>
 
 void drawSky() {
-
-
-    // Desenha a lua
-    float moonRadius = 8.0f;
-    float moonX = -70.0f, moonY = 30.0f, moonZ = -30.0f;
-
-    glColor3f(0.8f, 0.8f, 0.8f); // Cor cinza clara para a lua
     glPushMatrix();
-    glTranslatef(moonX, moonY, moonZ);
-    glutSolidSphere(moonRadius, 20,20);
-    glPopMatrix();
+    drawMoon();
 
     // Desenha as estrelas
-    glPointSize(2.0f); // Tamanho das estrelas
-    glBegin(GL_POINTS);
-    glColor3f(1.0f, 1.0f, 1.0f); // Cor branca para as estrelas
+    // pontos fixos ao redor de float moonX = -120.0f, moonY = 5.0f, moonZ = -30.0f;
 
-    for (int i = 0; i < 100; ++i) {
-        float x = static_cast<float>(rand() % 200 - 100);
-        float y = static_cast<float>(rand() % 200 - 100);
-        float z = static_cast<float>(rand() % 200 - 100);
-        glVertex3f(x, y, z);
-    }
-
-    glEnd();
+    glPopMatrix();
 }

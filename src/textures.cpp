@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 // Definição das variáveis globais para texturas
-GLuint treeTexture, groundTexture, underGroundTexture, snakeTexture, waterTexture;
+GLuint treeTexture, groundTexture, underGroundTexture, snakeTexture, waterTexture, moonTexture, trunkTexture, foliageTexture;
 
 
 GLuint loadTexture(const char *filename) {
