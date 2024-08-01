@@ -18,7 +18,7 @@ bool snakeDisappeared = false; // Flag para verificar se a cobra desapareceu
 float boatX, boatY, boatZ;     // Posição do barco
 float boatAngle = 0.0f;        // Ângulo de rotação do barco
 float boatSpeed = 0.03f;       // Velocidade do barco
-float snakeSpeed2 = 0.15f;
+float snakeSpeed2 = 0.11f;
 float amplitude = -1.2f;
 float frequency = 1.0f;
 int boatPhase = 0;             // Fase atual do movimento do barco
@@ -109,7 +109,7 @@ void updateSnake()
                 onSurface = true;
             }
         }
-        else if (totalAngle < 1 * M_PI)
+        else if (totalAngle < 4 * M_PI)
         {
             // Cobra dá duas voltas ao redor do ponto inicial
             snake[0].y = 0.5f;
@@ -160,7 +160,7 @@ void updateSnake()
             else
             {
                 boatPhase++;
-                boatAngle = 0.0f; // Virar para a esquerda
+                boatAngle = 180.0f; // Virar para a esquerda
             }
             break;
         case 2:

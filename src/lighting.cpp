@@ -1,24 +1,28 @@
 #include "lighting.h"
 #include <GL/glut.h>
 
-void initLighting() {
+void initLighting()
+{
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
 
-    GLfloat light_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-    GLfloat light_diffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-    GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    GLfloat light_position[] = { 0.0f, 1.0f, 1.0f, 0.0f }; // Direção da luz do sol
+    GLfloat light_ambient[] = {0.2f, 0.2f, 0.2f, 0.5f};
+    GLfloat light_diffuse[] = {0.4f, 0.4f, 0.4f, 0.5f};
+    GLfloat light_specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    GLfloat light_position[] = {0.0f, 1.0f, 1.0f, 0.0f}; // Direção da luz do sol
+    GLfloat mat_shininess[] = {10.0f};
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
     glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
     glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_position);
 }
 
-void setupWaterMaterial() {
+void setupWaterMaterial()
+{
     // Define propriedades do material da água
     GLfloat mat_specular[] = {0.3, 0.3, 0.3, 1.0}; // Reflectividade do material
     GLfloat mat_shininess[] = {70.0};              // Brilho do material
