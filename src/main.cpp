@@ -20,35 +20,31 @@
 
 #define M_PI 3.14159265358979323846
 
-// Variável para controlar o início da animação e da música
 bool animationStarted = false;
 
-// Inicial position, rotation, and scale for the cathedral model
 float modelPositionX = 0.0f;
 float modelPositionY = 0.5f;
-float modelPositionZ = -12.5f;
+float modelPositionZ = -19.5f;
 float modelRotationX = -90.0f;
 float modelRotationY = 0.0f;
-float modelScale = 0.080001f;
+float modelScale = 0.18f;
 
-// Inicial position, rotation, and scale para as casas
 float housePositions[6][3] = {
     {-10.0f, 0.1f, 10.0f},
     {-15.0f, 0.1f, 20.0f},
     {-15.0f, 0.1f, -20.0f},
     {-15.0f, 0.1f, -30.0f},
     {5.0f, 0.1f, 10.0f},
-    {10.0f, 0.1f, -10.0f}
+    {13.0f, 0.1f, -15.0f}
 };
 
-// Flags para as posições das janelas e portas nas casas
 int houseFlags[6] = {2, 2, 4, 4, 2, 1};
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     gluLookAt(cameraDistance, cameraY, cameraZ, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-    
+
     glPushMatrix();
     drawTrees();
     drawLake();
@@ -56,7 +52,7 @@ void display() {
     drawGround();
     drawUnderground();
     drawPillars();
-   
+
     for (int i = 0; i < 6; ++i) {
         glPushMatrix();
         glTranslatef(housePositions[i][0], housePositions[i][1], housePositions[i][2]);
@@ -64,7 +60,7 @@ void display() {
         glPopMatrix();
     }
     drawSnake();
-    drawSTLModel(cathedralModel, modelPositionX, modelPositionY, modelPositionZ, modelScale, modelRotationX, modelRotationY);
+    drawSTLModel(cathedralModel, modelPositionX, modelPositionY, modelPositionZ, modelScale, modelRotationX, modelRotationY, 0);
     glutSwapBuffers();
     glPopMatrix();
 }
@@ -85,31 +81,32 @@ void initOpenGL() {
     gluPerspective(45.0, 1.0, 1.0, 350.0);
     glMatrixMode(GL_MODELVIEW);
     initLighting();
-    initTrees(); // Inicializar as posições das árvores
+    initTrees();
 
     treeTexture = loadTexture("assets/arvore.png");
     groundTexture = loadTexture("assets/Dry_Pebbles_Grassy_[4K]_Diffuse.jpg");
     underGroundTexture = loadTexture("assets/PebblesSurface_1Albedo.jpg");
-    snakeTexture = loadTexture("assets/snake.png"); // Carregar a textura da cobra
+    snakeTexture = loadTexture("assets/snake.png");
     textureTopHome = loadTexture("assets/textureTopHome.png");
     textureWall = loadTexture("assets/textureWall.png");
     waterTexture = loadTexture("assets/water.png");
     texturePortAndDoors = loadTexture("assets/texturDoorAndPort.png");
     moonTexture = loadTexture("assets/moon.png");
-    trunkTexture = loadTexture("assets/bark.png"); 
+    trunkTexture = loadTexture("assets/bark.png");
     foliageTexture = loadTexture("assets/base_grass5.png");
-    // Carregar texturas e outros modelos...
+
     loadSTLModel("assets/Clermont-Ferrand_Cathedral.stl", cathedralModel);
+    loadSTLModel("assets/Head_B.STL", headModel); // Adicionar essa linha
+    loadSTLModel("assets/ship_v2_v2.stl", boatModel); // Adicionar essa linha
 }
 
-
 void handleKeypress(unsigned char key, int x, int y) {
-    if (key == 27) { // ESC
+    if (key == 27) {
         exit(0);
-    } else if (key == 13) { // Enter
+    } else if (key == 13) {
         if (!animationStarted) {
             animationStarted = true;
-            initAudio(); // Inicializa e toca a música
+            initAudio();
             music.play();
         }
     } else if (key == '+') {
@@ -121,7 +118,6 @@ void handleKeypress(unsigned char key, int x, int y) {
 }
 
 int main(int argc, char **argv) {
-    
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(800, 600);

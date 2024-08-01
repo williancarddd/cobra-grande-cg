@@ -10,7 +10,7 @@ float cameraSpeed = 0.1f; // Velocidade de rotação da câmera
 float cameraVerticalSpeed = 0.1f; // Velocidade de movimento vertical
 
 void handleSpecialKeypress(int key, int x, int y) {
-    float angleSpeed = 2.0f;
+    float angleSpeed = 1.0f;
     switch (key) {
     case GLUT_KEY_LEFT:
         cameraAngleY -= angleSpeed;

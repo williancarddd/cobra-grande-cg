@@ -112,6 +112,18 @@
     "streambuf": "cpp",
     "cinttypes": "cpp",
     "typeinfo": "cpp",
-    "sstream": "cpp"
+    "sstream": "cpp",
+    "bitset": "cpp",
+    "chrono": "cpp",
+    "codecvt": "cpp",
+    "condition_variable": "cpp",
+    "cstring": "cpp",
+    "ratio": "cpp",
+    "iomanip": "cpp",
+    "mutex": "cpp",
+    "semaphore": "cpp",
+    "stop_token": "cpp",
+    "thread": "cpp",
+    "__nullptr": "cpp"
   }
 }

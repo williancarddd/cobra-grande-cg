@@ -1,20 +1,30 @@
 #include "snake.h"
 #include <GL/glut.h>
 #include <cmath>
-#include <vector>
+#include "models.h"
 
 // Variável global para a textura da cobra
 extern GLuint snakeTexture;
+extern std::vector<Triangle> boatModel;
 
 std::vector<Segment> snake;
-int numSegments = 50; // Redução do número de segmentos
-float segmentSize = 1.0f; // Tamanho ajustado do segmento
-float snakeSpeed = 0.05f; // Ajuste para movimento suave
+int numSegments = 55;        // Número de segmentos
+float segmentSize = 1.5f;    // Tamanho do segmento
+float snakeSpeed = 0.05f;    // Velocidade do movimento da cobra
 float radius = 6.0f;
-float elevationSpeed = 0.07f;  // Ajuste para elevação suave
-bool onSurface = false;        // Flag para verificar se a cobra está na superfície
+float elevationSpeed = 0.07f; // Velocidade de elevação da cobra
+bool onSurface = false;       // Flag para verificar se a cobra está na superfície
 bool snakeDisappeared = false; // Flag para verificar se a cobra desapareceu
 float boatX, boatY, boatZ;     // Posição do barco
+float boatAngle = 0.0f;        // Ângulo de rotação do barco
+float boatSpeed = 0.03f;       // Velocidade do barco
+float snakeSpeed2 = 0.15f;
+float amplitude = -1.2f;
+float frequency = 1.0f;
+int boatPhase = 0;             // Fase atual do movimento do barco
+bool snakeReturn = false;      // Flag para verificar se a cobra está retornando
+bool snakeCirculo = false;     // Flag para o movimento circular
+int appearingSegments = 0;     // Inicialização correta para garantir que a cobra apareça no início
 
 void initSnake()
 {
@@ -30,15 +40,26 @@ void initSnake()
     }
 }
 
-void drawBoat(float x, float y, float z)
+void drawBoat(float x, float y, float z, float angle)
 {
-    // Desenha um barco simples na posição especificada
     glPushMatrix();
-    glColor3f(0.3f, 0.2f, 0.1f); // Marrom para o barco
     glTranslatef(x, y, z);
-    glScalef(2.0f, 0.5f, 1.0f);
-    glutSolidCube(segmentSize * 5); // Tamanho ajustado do barco
+    glRotatef(angle, 0.0f, 1.0f, 0.0f); // Rotação em torno do eixo Y
+    drawSTLModel(boatModel, 0, 0, 0, 0.05f, -90.0f, 0.0f, 0.0f);
     glPopMatrix();
+}
+
+void drawSnakeSegment(const Segment &segment, float segmentSize)
+{
+    GLUquadric *quad = gluNewQuadric();
+    gluQuadricTexture(quad, GL_TRUE);
+
+    glPushMatrix();
+    glTranslatef(segment.x, segment.y, segment.z);
+    gluSphere(quad, segmentSize * 0.6f, 32, 32);
+    glPopMatrix();
+
+    gluDeleteQuadric(quad);
 }
 
 void drawSnake()
@@ -46,45 +67,23 @@ void drawSnake()
     glPushMatrix();
     if (snakeDisappeared)
     {
-        drawBoat(boatX, boatY, boatZ);
+        drawBoat(snake[0].x, snake[0].y, snake[0].z, boatAngle); // Utiliza o ângulo atualizado
     }
     else
     {
-        glEnable(GL_TEXTURE_2D); // Habilitar texturas
-        glBindTexture(GL_TEXTURE_2D, snakeTexture); // Vincular a textura da cobra
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, snakeTexture);
 
-        GLUquadric* quad = gluNewQuadric();
-        gluQuadricTexture(quad, GL_TRUE);
-
-        for (int i = 0; i < numSegments - 1; ++i)
+        for (int i = 0; i < numSegments; ++i)
         {
-            float dx = snake[i + 1].x - snake[i].x;
-            float dy = snake[i + 1].y - snake[i].y;
-            float dz = snake[i + 1].z - snake[i].z;
-
-            float length = sqrt(dx * dx + dy * dy + dz * dz);
-
-            glPushMatrix();
-            glTranslatef(snake[i].x, snake[i].y, snake[i].z);
-
-            float angleX = atan2(dy, length) * 180.0 / M_PI;
-            float angleZ = atan2(dx, dz) * 180.0 / M_PI;
-
-            glRotatef(angleZ, 0.0f, 1.0f, 0.0f);
-            glRotatef(angleX, 1.0f, 0.0f, 0.0f);
-
-            gluCylinder(quad, segmentSize * 0.6f, segmentSize * 0.6f, length, 32, 32);
-            gluDisk(quad, 0, segmentSize * 0.6f, 32, 1); // Fechar a base do cilindro
-            glTranslatef(0, 0, length);
-            gluDisk(quad, 0, segmentSize * 0.6f, 32, 1); // Fechar o topo do cilindro
-
-            glPopMatrix();
+            if (snake[i].x > -25.0f || snakeReturn || snakeCirculo)
+            {
+                drawSnakeSegment(snake[i], segmentSize);
+            }
         }
 
-        gluDeleteQuadric(quad);
         glDisable(GL_TEXTURE_2D);
     }
-
     glPopMatrix();
 }
 
@@ -92,48 +91,152 @@ void updateSnake()
 {
     static float angle = 0.0f;
     static float totalAngle = 0.0f;
-    angle += snakeSpeed;
-    totalAngle += snakeSpeed;
 
-    if (!onSurface)
+    if (!snakeDisappeared && !snakeReturn && !snakeCirculo)
     {
-        // Elevação suave da cobra
-        snake[0].x = radius * cos(angle);
-        snake[0].y += elevationSpeed;
-        snake[0].z = radius * sin(angle);
+        angle += snakeSpeed;
+        totalAngle += snakeSpeed;
 
-        if (snake[0].y >= 0.0f)
+        if (!onSurface)
         {
-            onSurface = true;
+            // Elevação suave da cobra
+            snake[0].x = radius * cos(angle);
+            snake[0].y += elevationSpeed;
+            snake[0].z = radius * sin(angle);
+
+            if (snake[0].y >= 0.0f)
+            {
+                onSurface = true;
+            }
+        }
+        else if (totalAngle < 1 * M_PI)
+        {
+            // Cobra dá duas voltas ao redor do ponto inicial
+            snake[0].y = 0.5f;
+            snake[0].x = radius * cos(angle);
+            snake[0].z = radius * sin(angle);
+        }
+        else
+        {
+            if (snake[0].x > -25.0f)
+            {
+                // Cobra segue em linha reta com movimento senoidal em direção ao lago
+                float newX = snake[0].x - snakeSpeed2;
+                float newZ = amplitude * sin(frequency * newX);
+
+                snake[0].x = newX;
+                snake[0].z = newZ;
+            }
+            else
+            {
+                // Cobra atinge a posição x = -25 e desaparece
+                snakeDisappeared = true;
+                appearingSegments = 0; // Resetar para que apareça gradualmente no retorno
+            }
         }
     }
-    else if (totalAngle < 4 * M_PI)
+    else if (snakeDisappeared)
     {
-        // Cobra dá duas voltas ao redor do ponto inicial
-        snake[0].y = .5f;
+        switch (boatPhase)
+        {
+        case 0:
+            if (snake[0].x > -50.0f)
+            {
+                // Movimento do barco em linha reta até x = -50
+                snake[0].x -= snakeSpeed2 + 0.04f;
+            }
+            else
+            {
+                boatPhase++;
+                boatAngle = 270.0f; // Virar para a direita
+            }
+            break;
+        case 1:
+            if (snake[0].z > -25.0f)
+            {
+                // Movimento do barco em linha reta até z = -25
+                snake[0].z -= snakeSpeed2 + 0.04f;
+            }
+            else
+            {
+                boatPhase++;
+                boatAngle = 0.0f; // Virar para a esquerda
+            }
+            break;
+        case 2:
+            if (snake[0].x < -35.0f)
+            {
+                // Movimento do barco em linha reta até x = -35
+                snake[0].x += snakeSpeed2 + 0.04f;
+            }
+            else
+            {
+                boatPhase++;
+                boatAngle = 90.0f; // Virar para cima
+            }
+            break;
+        case 3:
+            if (snake[0].z < 0.0f)
+            {
+                // Movimento do barco em linha reta até z = 0
+                snake[0].z += snakeSpeed2 + 0.04f;
+            }
+            else
+            {
+                boatPhase++;
+                boatAngle = 180.0f; // Virar para a esquerda
+            }
+            break;
+        case 4:
+            if (snake[0].x <= -25.0f)
+            {
+                // Movimento do barco em linha reta até x = -25
+                snake[0].x += snakeSpeed2 + 0.04f;
+            }
+            else
+            {
+                boatPhase++;
+                boatAngle = 0.0f; // Barco chegou ao destino final
+                snakeReturn = true;
+                snakeDisappeared = false;
+                appearingSegments = 0; // Resetar para o retorno gradual dos segmentos
+            }
+            break;
+        }
+    }
+    else if (snakeReturn)
+    {
+        if (snake[0].x < 0.0f)
+        {
+            // Movimento da cobra de volta à posição inicial
+            snake[0].x += snakeSpeed2;
+            snake[0].z = amplitude * sin(frequency * snake[0].x);
+
+            // Gradualmente adicionar segmentos de volta
+            if (appearingSegments < numSegments && snake[appearingSegments].x > -25.0f)
+            {
+                appearingSegments++;
+            }
+        }
+        else
+        {
+            snakeReturn = false;
+            snakeCirculo = true;
+            appearingSegments = numSegments; // Certificar-se de que todos os segmentos aparecem
+        }
+    }
+    if (snakeCirculo)
+    {
+        angle += snakeSpeed;
         snake[0].x = radius * cos(angle);
         snake[0].z = radius * sin(angle);
-    }
-    else
-    {
-        // Cobra segue em linha reta
-        snake[0].x -= 0.2;
-
-        // Cobra atinge a posição x = -20 e desaparece
-        if (snake[0].x <= -20.0f)
-        {
-            snakeDisappeared = true;
-            boatX = snake[0].x;
-            boatY = snake[0].y;
-            boatZ = snake[0].z;
-        }
     }
 
     // Atualiza os segmentos da cobra com interpolação suave
     for (int i = numSegments - 1; i > 0; --i)
     {
-        snake[i].x += (snake[i - 1].x - snake[i].x) * 0.5;
-        snake[i].y += (snake[i - 1].y - snake[i].y) * 0.5;
-        snake[i].z += (snake[i - 1].z - snake[i].z) * 0.5;
+        snake[i].x += (snake[i - 1].x - snake[i].x) * 0.5f;
+        snake[i].y += (snake[i - 1].y - snake[i].y) * 0.5f;
+        snake[i].z += (snake[i - 1].z - snake[i].z) * 0.5f;
     }
 }
