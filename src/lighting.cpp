@@ -7,11 +7,11 @@ void initLighting()
     glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
 
-    GLfloat light_ambient[] = {0.2f, 0.2f, 0.2f, 0.5f};
-    GLfloat light_diffuse[] = {0.4f, 0.4f, 0.4f, 0.5f};
+    GLfloat light_ambient[] = {0.4f, 0.4f, 0.4f, 0.8f};
+    GLfloat light_diffuse[] = {0.8f, 0.8f, 0.8f, 0.8f};
     GLfloat light_specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
     GLfloat light_position[] = {0.0f, 1.0f, 1.0f, 0.0f}; // Direção da luz do sol
-    GLfloat mat_shininess[] = {10.0f};
+    GLfloat mat_shininess[] = {70.0f};
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
@@ -42,8 +42,8 @@ void setupWaterMaterial()
 
     // Configura o ambiente de iluminação
     GLfloat light_position[] = {0.0, 1.0, 1.0, 0.0}; // Posição da luz light_position[0] se refere a posição x, light_position[1] se refere a posição y, light_position[2] se refere a posição z e light_position[3] se refere a posição w
-    GLfloat light_ambient[] = {0.2, 0.2, 0.2, 1.0};  // Luz ambiente
-    GLfloat light_diffuse[] = {0.8, 0.8, 0.8, 1.0};  // Luz difusa
+    GLfloat light_ambient[] = {0.6, 0.6, 0.6, 1.0};  // Luz ambiente
+    GLfloat light_diffuse[] = {1.8, 1.8, 0.8, 1.0};  // Luz difusa
     GLfloat light_specular[] = {1.0, 1.0, 1.0, 1.0}; // Luz especular
 
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
